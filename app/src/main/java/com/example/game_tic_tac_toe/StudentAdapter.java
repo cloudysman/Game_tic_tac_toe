@@ -22,6 +22,7 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
         notifyDataSetChanged();
     }
 
+
     public void setOnClickItem(OnItemClickListener callback) {
         this.onClickItem = callback;
     }
@@ -58,7 +59,6 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
     }
 
     public static class StudentViewHolder extends RecyclerView.ViewHolder {
-        private TextView id;
         private TextView name;
         private TextView email;
         private TextView password;
@@ -66,7 +66,6 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
 
         public StudentViewHolder(View view) {
             super(view);
-            id = view.findViewById(R.id.tvid);
             name = view.findViewById(R.id.tvname);
             email = view.findViewById(R.id.tvemail);
             password=view.findViewById(R.id.tvpassword);
@@ -74,7 +73,6 @@ public class StudentAdapter extends RecyclerView.Adapter<StudentAdapter.StudentV
         }
 
         public void bindView(StudentModel std) {
-            id.setText(String.valueOf(std.getId()));
             name.setText(std.getName());
             email.setText(std.getEmail());
             password.setText(std.getPassword());

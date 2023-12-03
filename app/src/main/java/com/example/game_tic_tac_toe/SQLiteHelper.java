@@ -6,6 +6,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
@@ -13,7 +15,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "student.db";
     private static final String TBL_STUDENT = "tbl_student";
-    private static final String ID = "id";
     private static final String NAME = "name";
     private static final String EMAIL = "email";
     private static final String PASSWORD ="password";
@@ -24,10 +25,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String createTblStudent = "CREATE TABLE " + TBL_STUDENT + "(" +
-                ID + " INTEGER PRIMARY KEY, " +
                 NAME + " TEXT," +
                 PASSWORD + " TEXT," +
-                EMAIL + " TEXT" + ")";
+                EMAIL + " TEXT PRIMARY KEY" + ")";
         db.execSQL(createTblStudent);
     }
 
@@ -37,8 +37,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
     public Boolean checkEmail(String email){
-        SQLiteDatabase MyDatabase=this.getWritableDatabase();
-        Cursor cursor =MyDatabase.rawQuery("Select * from allusers where email =?", new String []{email});
+        SQLiteDatabase MyDatabase=this.getReadableDatabase();
+        Cursor cursor =MyDatabase.rawQuery("Select * from "+TBL_STUDENT+" where email =?", new String []{email});
         if(cursor.getCount()>0){
             return true;
         }
@@ -47,8 +47,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         }
     }
     public Boolean checkEmailPassword(String email, String password){
-        SQLiteDatabase MyDatabase =this.getWritableDatabase();
-        Cursor cursor =MyDatabase.rawQuery("Select * from allusers where email = ? and pasword = ?", new String[]{email,password});
+        SQLiteDatabase MyDatabase =this.getReadableDatabase();
+        Cursor cursor =MyDatabase.rawQuery("Select * from "+TBL_STUDENT+" where email = ? and password = ?", new String[]{email,password});
         if(cursor.getCount()>0){
             return true;
         }
@@ -60,7 +60,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public long insertStudent(StudentModel std) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ID, std.getId());
         contentValues.put(NAME, std.getName());
         contentValues.put(EMAIL, std.getEmail());
         contentValues.put(PASSWORD,std.getPassword());
@@ -82,17 +81,15 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             db.execSQL(selectQuery);
             return new ArrayList<>();
         }
-        int id;
         String name;
         String email;
         String password;
         if (cursor.moveToFirst()) {
             do {
-                id = cursor.getInt(cursor.getColumnIndex("id"));
                 name = cursor.getString(cursor.getColumnIndex("name"));
                 email = cursor.getString(cursor.getColumnIndex("email"));
                 password= cursor.getString(cursor.getColumnIndex("password"));
-                StudentModel std = new StudentModel(id, name, email,password);
+                StudentModel std = new StudentModel( name, email,password);
                 stdList.add(std);
             } while (cursor.moveToNext());
         }
@@ -104,27 +101,25 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     public int updateStudent(StudentModel std) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put(ID, std.getId());
         contentValues.put(NAME, std.getName());
         contentValues.put(EMAIL, std.getEmail());
         contentValues.put(PASSWORD, std.getPassword());
-        int success = db.update(TBL_STUDENT, contentValues, "id=?", new String[]{String.valueOf(std.getId())});
+        int success = db.update(TBL_STUDENT, contentValues, "email=?", new String[]{String.valueOf(std.getEmail())});
         db.close();
         return success;
     }
 
-    public int deleteStudentById(int id) {
+    public int deleteStudentByEmail(String email) {
         SQLiteDatabase db = this.getWritableDatabase();
-        int success = db.delete(TBL_STUDENT, "id=?", new String[]{String.valueOf(id)});
+        int success = db.delete(TBL_STUDENT, "email=?", new String[]{String.valueOf(email)});
         db.close();
         return success;
     }
 
-    public Boolean insertStudent(int id, String name, String email, String password) {
+    public Boolean insertData(String name, String email, String password) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        StudentModel std = null;
-        contentValues.put(ID, std.getId());
+        StudentModel std =new StudentModel(name,email,password);
         contentValues.put(NAME, std.getName());
         contentValues.put(EMAIL, std.getEmail());
         contentValues.put(PASSWORD,std.getPassword());
@@ -136,5 +131,6 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         else{
             return true;
         }
+
     }
 }

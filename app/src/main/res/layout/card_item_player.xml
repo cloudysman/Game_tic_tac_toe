@@ -13,12 +13,6 @@
         android:layout_weight="1"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/tvid"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp"
-            tools:text="ID"/>
-        <TextView
             android:id="@+id/tvname"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,4 +38,5 @@
         android:gravity="center_vertical"
         android:text="Xóa"
         android:textAllCaps="false"/>
+
 </LinearLayout>

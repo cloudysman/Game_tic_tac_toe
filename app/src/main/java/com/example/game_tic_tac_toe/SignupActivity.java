@@ -35,7 +35,7 @@ public class SignupActivity extends AppCompatActivity {
                     if (password.equals(confirmPassword)) {
                         Boolean checkUserEmail = databaseHelper.checkEmail(email);
                         if (checkUserEmail == false) {
-                            Boolean insert = databaseHelper.insertStudent(this.std.getId(),name, email, password);
+                            Boolean insert = databaseHelper.insertData(name, email, password);
                             if (insert == true) {
                                 Toast.makeText(SignupActivity.this, "Đăng ký thành công", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(getApplicationContext(), LoginActivity.class);

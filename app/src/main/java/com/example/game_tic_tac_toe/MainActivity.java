@@ -48,24 +48,25 @@ public class MainActivity extends AppCompatActivity {
             std = item;
         });
 
-        adapter.setOnClickDeleteItem(item -> deleteStudent(item.getId()));
+        adapter.setOnClickDeleteItem(item -> deleteStudent(item.getEmail()));
+        getStudents();
     }
 
     private void updateStudent() {
         String name = idname.getText().toString();
         String email = idemail.getText().toString();
         String password=idpassword.getText().toString();
-
+        if (std == null) {
+            return;
+        }
         if (name.equals(std.getName()) && email.equals(std.getEmail())&&password.equals(std.getPassword())) {
             Toast.makeText(this, "Record not changed....", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (std == null) {
-            return;
-        }
 
-        StudentModel std = new StudentModel(this.std.getId(), name, email,password);
+
+        StudentModel std = new StudentModel( name, email,password);
         int status = sqLiteHelper.updateStudent(std);
 
         if (status > -1) {
@@ -78,16 +79,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void getStudents() {
         List<StudentModel> stdList = sqLiteHelper.getAllStudent();
-        Log.e("pppp", String.valueOf(stdList.size()));
+        Log.e("Số thành viên", String.valueOf(stdList.size()));
         adapter.addItem((ArrayList<StudentModel>) stdList);
+        adapter.notifyDataSetChanged();
     }
 
-    private void deleteStudent(int id) {
+
+    private void deleteStudent(String email) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Are you sure you want to delete item?");
         builder.setCancelable(true);
         builder.setPositiveButton("Yes", (dialog, which) -> {
-            sqLiteHelper.deleteStudentById(id);
+            sqLiteHelper.deleteStudentByEmail(email);
             getStudents();
             dialog.dismiss();
         });
@@ -106,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        StudentModel std = new StudentModel(this.std.getId(),name, email, password);
+        StudentModel std = new StudentModel(name, email, password);
         int status = (int) sqLiteHelper.insertStudent(std);
 
         if (status > -1) {
